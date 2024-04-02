@@ -1,33 +1,46 @@
 #!/usr/bin/python3
 """
-Defines status endpoint of this api
+index
 """
-from . import City
-from . import User
-from . import Place
-from . import State
-from . import Review
-from . import Amenity
-from . import app_views
-from . import storage
+
+from flask import jsonify
+from api.v1.views import app_views
+
+from models import storage
 
 
-@app_views.route("/status")
+@app_views.route("/status", methods=['GET'], strict_slashes=False)
 def status():
     """
-    Returns a JSON status of the api
+    status route
+    :return: response with json
     """
-    return {"status": "OK"}
+    data = {
+        "status": "OK"
+    }
+
+    resp = jsonify(data)
+    resp.status_code = 200
+
+    return resp
 
 
-@app_views.route("/stats")
+@app_views.route("/stats", methods=['GET'], strict_slashes=False)
 def stats():
     """
-    retrieves the number of each objects by Model
+    stats of all objs route
+    :return: json of all objs
     """
-    stats = {}
-    clz = {"amenities": Amenity, "cities": City, "places": Place,
-           "reviews": Review, "states": State, "users": User}
-    for k, v in clz.items():
-        stats[k] = storage.count(v)
-    return stats
+    data = {
+        "amenities": storage.count("Amenity"),
+        "cities": storage.count("City"),
+        "places": storage.count("Place"),
+        "reviews": storage.count("Review"),
+        "states": storage.count("State"),
+        "users": storage.count("User"),
+    }
+
+    resp = jsonify(data)
+    resp.status_code = 200
+
+    return resp
